@@ -11,7 +11,7 @@ app.get("/", (request, response) => {
 });
 app.listen(process.env.PORT);
 setInterval(() => {
-  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+  http.get(`http://systemv2bot.glitch.me/`);
 }, 280000);
 
 ////بكجات
@@ -36,10 +36,10 @@ const { get } = require("snekfetch");
 const guild = require("guild");
 const dateFormat = require("dateformat");
 const YouTube = require("simple-youtube-api");
-const youtube = new YouTube("AIzaSyBBaZeRqB021J5mRqY008GPQ0NCG3iOjcQ"); //تعديل اساسي سوي اي بي اي جديد
+const youtube = new YouTube("AIzaSyAEA8NK0V2Aa7vFFGTY6bIuHOKdx6PsN6g"); //تعديل اساسي سوي اي بي اي جديد
 const hastebins = require("hastebin-gen");
 const getYoutubeID = require("get-youtube-id");
-const yt_api_key = "AIzaSyBBaZeRqB021J5mRqY008GPQ0NCG3iOjcQ"; ///تعديل اساسي سوي اي بي اي جديد
+const yt_api_key = "AIzaSyAEA8NK0V2Aa7vFFGTY6bIuHOKdx6PsN6g"; ///تعديل اساسي سوي اي بي اي جديد
 const pretty = require("pretty-ms");
 client.login(process.env.TOKEN);
 const queue = new Map();
@@ -1053,6 +1053,7 @@ client.on("message", async message => {
 ///تعديل غير اساسي
 ///تقدر الصورة الخلفية ، شوف الشرح الرابط فوق اول الكود
 /// كود الوان
+/*
 client.on("message", message => {
   if (!message.guild || message.author.bot) return;
   if (message.content == prefix + "colors") {
@@ -1110,7 +1111,7 @@ client.on("message", message => {
     });
   }
 });
-
+*/
 /// كود تعين اللوق
 const log = JSON.parse(fs.readFileSync("./log.json", "utf8"));
 
@@ -1851,7 +1852,28 @@ client.on("message", message => {
 ///test
 */
 
-///// كود خروج الاعضاء
+/// كود عمل ألوان
+/*
+clinet.on("message" , ra3d =>{
+  let args = ra3d.content
+  .slipt("")
+  .slince(1)
+  .join("")
+  if (ra3d.content.startsWith(prefix + "ccolors"))
+    if (!args) return ra3d.channel.send("يرجى اختيار كم لون")
+    if (!ra3d.member.hasPermission("MANAGE_ROLES"))
+      return ra3d.channel.send("`**⚠️ | ` [MANAGE_ROLES] ` لا يوجد لديك صلاحية** ")
+  ra3d.channel.send(`**✅ | Created _${args}_ Colors ** )
+  setInterval(function() {})
+  let count = 0;
+  let ecount = 0;
+  for (let x = 1; x < `${parseInt(args) + 1} `; x++) {
+    ra3d.guild.createRole({ name: x, color: "RANDOM" })
+  }
+}
+});
+*/
+/// كود خروج الاعضاء
 
 client.on("message", message => {
   if (message.content.startsWith(prefix + "setby")) {
@@ -4320,6 +4342,99 @@ client.on("message", async msg => {
   }
 });
 
+//// كود Youtube
+const { MessageEmbed } = require("discord.js");
+
+module.exports = {
+    run: async (client, message, args, { GuildDB }) => {
+        if (!message.member.voice.channel) return client.sendTime(message.channel, "❌ | **You must be in a voice channel to play something!**");
+        if(!message.member.voice.channel.permissionsFor(message.guild.me).has("CREATE_INSTANT_INVITE"))return client.sendTime(message.channel, "❌ | **Bot doesn't have Create Invite Permission**");
+
+        let Invite = await message.member.voice.channel.activityInvite("755600276941176913")//Made using discordjs-activity package
+        let embed = new MessageEmbed()
+        .setAuthor("YouTube Together", "https://cdn.discordapp.com/emojis/749289646097432667.png?v=1")
+        .setColor("#FF0000")
+        .setDescription(`
+Using **YouTube Together** you can watch YouTube with your friends in a Voice Channel. Click *Join YouTube Together* to join in!
+__**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
+⚠ **Note:** This only works in Desktop
+`)
+        message.channel.send(embed)
+    },
+    SlashCommand: {
+        options: [
+        ],
+    /**
+     *
+     * @param {import("../structures/DiscordMusicBot")} client
+     * @param {import("discord.js").Message} message
+     * @param {string[]} args
+     * @param {*} param3
+     */
+        run: async (client, interaction, args, { GuildDB }) => {
+            const guild = client.guilds.cache.get(interaction.guild_id);
+            const member = guild.members.cache.get(interaction.member.user.id);
+
+            if (!member.voice.channel) return client.sendTime(interaction, "❌ | You must be in a voice channel to use this command.");
+            if(!member.voice.channel.permissionsFor(guild.me).has("CREATE_INSTANT_INVITE"))return client.sendTime(interaction, "❌ | **Bot doesn't have Create Invite Permission**");
+
+            let Invite = await member.voice.channel.activityInvite("755600276941176913")//Made using discordjs-activity package
+            let embed = new MessageEmbed()
+            .setAuthor("YouTube Together", "https://cdn.discordapp.com/emojis/749289646097432667.png?v=1")
+            .setColor("#FF0000")
+            .setDescription(`
+Using **YouTube Together** you can watch YouTube with your friends in a Voice Channel. Click *Join YouTube Together* to join in!
+__**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
+⚠ **Note:** This only works in Desktop
+`)
+            interaction.send(embed.toJSON())
+        },
+    },
+};
+////كود سلاش
+const fs = require("fs");
+const path = require("path");
+
+module.exports = (client, guild) => {
+  client.log("Registering slash commands for " + guild);
+
+  let commandsDir = path.join(__dirname, "..", "commands");
+
+  fs.readdir(commandsDir, (err, files) => {
+    if (err) throw err;
+    files.forEach(async (file) => {
+      let cmd = require(commandsDir + "/" + file);
+      if (!cmd.SlashCommand || !cmd.SlashCommand.run) return;
+      let dataStuff = {
+        name: cmd.name,
+        description: cmd.description,
+        options: cmd.SlashCommand.options,
+      };
+
+      //Creating variables like this, So you might understand my code :)
+      let ClientAPI = client.api.applications(client.user.id);
+      let GuildAPI = ClientAPI.guilds(guild);
+
+      client.log(
+        "[Slash Command]: [POST] Guild " +
+          guild +
+          ", Command: " +
+          dataStuff.name
+      );
+      try {
+        await GuildAPI.commands.post({ data: dataStuff });
+      } catch (e) {
+        client.log(
+          "[Slash Command]: [POST-FAILED] Guild " +
+            guild +
+            ", Command: " +
+            dataStuff.name
+        );
+        console.log(e);
+      }
+    });
+  });
+};
 //// مهم
 /// {} عند عمل ريمكس للبوت احذف مايوجد بملفات الجيسون وحط قوسين مثل
 //// يجب ان يكون البوت رتبة اقل من رتبة البوتات الموثوقة والكبيرة مثل داينو بوت وبروبوت والاخرى لكي لا يعطيهم باند
